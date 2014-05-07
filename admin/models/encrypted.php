@@ -24,49 +24,33 @@ class EncryptedModelEncrypted extends JModelItem
 	function __construct()
 	{
 		parent::__construct();
+		$this->app    = JFactory::getApplication();
 		$this->config = JFactory::getConfig();
+		$this->db     = JFactory::getDbo();
 	}
 
+	/**
+	 * Inserts random, aes_encrypted data
+	 *
+	 * @return null;
+	 */
 	public function insertRandomEncrypted()
 	{
+		$query = $this->db->getQuery(true);
 
-		try
-		{
-			$pdo = new PDO('mysql:host=' . $this->config->get('host') . ';dbname=' . $this->config->get('db'), $this->config->get('user'), $this->config->get('password'));
-			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$random = substr(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 25);
 
-		} catch (PDOException $e)
-		{
-			$result = "Error!: " . $e->getMessage() . "<br/>";
-		}
+		$query
+			->insert($this->db->quoteName('#__encrypted'))
+			->columns($this->db->quoteName('stuff'))
+			->values('AES_ENCRYPT("' . $random . '", "' . $this->config->get('secret') . '")');
 
-		$sql = 'INSERT INTO `' . $this->config->get('dbprefix') . 'encrypted`
-		(
-			stuff
-		)
-		VALUES (
-			AES_ENCRYPT(:stuff, :cryptkey)
-		)';
+		$this->db->setQuery($query);
+		$this->db->query();
 
-		try
-		{
-			$query  = $pdo->prepare($sql);
-			$random = substr(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 25);
+		$this->app->enqueueMessage($random . ' was inserted as encrypted data.');
 
-			$query->execute(
-				array(
-					':cryptkey' => $this->config->get('secret'),
-					':stuff'    => $random
-				)
-			);
-
-			$result = "$random inserted\n";
-		} catch (PDOException $e)
-		{
-			$result = "Error!: " . $e->getMessage() . "<br/>";
-		}
-
-		return $result;
+		return;
 
 	}
 }
