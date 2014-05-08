@@ -9,4 +9,5 @@
  * License    GNU GPL v2 or later
  */
 
-echo $this->result;
+echo '<pre>' . print_r($this->lastRecord, true) . '</pre>';
+echo '<pre>' . print_r($this->lastAesEncrypted, true) . '</pre>';

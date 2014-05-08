@@ -19,8 +19,10 @@ class EncryptedViewEncrypted extends JViewLegacy
 	function display($tpl = null)
 	{
 		$model = $this->getModel();
+		$model->doStuff();
 
-		$this->assignRef('result', $model->insertRandomEncrypted());
+		$this->assignRef('lastRecord', $model->selectLastRecord());
+		$this->assignRef('lastAesEncrypted', $model->selectLastAesencrypted());
 
 		parent::display($tpl);
 	}

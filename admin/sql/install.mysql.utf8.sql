@@ -1,6 +1,8 @@
 CREATE TABLE IF NOT EXISTS `#__encrypted` (
 	`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-	`stuff` VARBINARY(271) DEFAULT NULL,
+	`plaintext` VARCHAR(255) DEFAULT NULL,
+	`aesencrypted` VARBINARY(271) DEFAULT NULL,
+	`mycrypted` VARBINARY(271) DEFAULT NULL,
 	PRIMARY KEY (`id`)
 	)
 ENGINE =MyISAM
